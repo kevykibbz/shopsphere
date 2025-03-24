@@ -89,7 +89,7 @@ router.post("/new", isAdmin, upload.array("images", 5), async (req, res) => {
 router.post("/:id/wishlist", async (req, res) => {
   try {
     const productId = req.params.id;
-    const userId = req.user._id; // Assuming the user is authenticated
+    const userId = req.user._id; 
 
     // Check if the product exists
     const product = await Product.findById(productId);

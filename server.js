@@ -143,7 +143,6 @@ app.use("/dashboard", dashboardRoutes)
 app.use("/api/orders", orderRoutes)
 app.use("/orders", orderRoutes)
 app.use("/api/search", searchRoutes);
-app.use("/faq", indexRoutes);
 
 
 // All other routes (404 - Not Found)

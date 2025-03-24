@@ -4,11 +4,24 @@ const router = express.Router();
 const { isAuthenticated } = require("../middlewares/auth");
 
 // POST /api/orders - Create a new order
-router.post("/", isAuthenticated,async (req, res) => {
+// POST /api/orders - Create a new order
+router.post("/", isAuthenticated, async (req, res) => {
   try {
+    const userId = req.user._id; 
     const order = new Order(req.body);
     await order.save();
-    res.status(201).json({ message: "Order created successfully", order });
+
+    await Cart.findOneAndUpdate(
+      { user: userId },
+      { $set: { items: [] } }, // Empty the items array
+      { new: true }
+    );
+
+    res.status(201).json({ 
+      message: "Order created successfully", 
+      order,
+      cartCleared: true
+    });
   } catch (err) {
     console.error("Error creating order:", err);
     res.status(500).json({ message: "Server error" });
@@ -27,8 +40,6 @@ router.get("/:order_id",async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-
-    console.log("order:",order)
 
     res.render("orders", {
       title: "Orders",
