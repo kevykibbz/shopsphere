@@ -1,0 +1,98 @@
+<section>
+    <!-- Page Header -->
+    <div class="page-header text-center" style="background-image: url('/assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">Order Details<span>Shop</span></h1>
+        </div>
+    </div>
+    
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Orders</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Order #<%= order._id %></li>
+            </ol>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="container">
+            <!-- Order Details Section -->
+            <div class="row">
+                <div class="col-lg-9 col-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="order-summary">
+                                <h3>Order Summary</h3>
+                                <p><strong>Order ID:</strong> <%= order._id %></p>
+                                <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                                <p><strong>Status:</strong> <span class="badge badge-primary py-2 px-2"><%= order.status %></span></p>
+                                <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+                                <p><strong>Total Amount:</strong> $<%= order.totalAmount.toFixed(2) %></p>
+                                <p><strong>Shipping Option:</strong> <%= order.shippingOption %></p>
+                                <p><strong>Shipping Cost:</strong> $<%= order.shippingCost.toFixed(2) %></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Shipping Address -->
+                            <div class="shipping-info">
+                                <h3>Shipping Address</h3>
+                                <p>
+                                    <%= order.shippingAddress.street %>, <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %>, <%= order.shippingAddress.postalCode %>, <%= order.shippingAddress.country %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ordered Items -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="products mb-3 mt-2">
+                                <h3>Items in Order</h3>
+                                <div class="row">
+                                    <% order.items.forEach(item => { %>
+                                        <div class="col-6 col-md-4 col-lg-4">
+                                            <div class="product product-7 text-center">
+                                                <figure class="product-media">
+                                                    <a href="/product/<%= item.product._id %>">
+                                                        <img src="<%= item.product.images.length > 0 ? item.product.images[0] : '/assets/images/no-image.png' %>" 
+                                                             alt="<%= item.product.name %>"
+                                                             class="product-image"
+                                                             loading="lazy"/>
+                                                    </a>
+                                                </figure>
+        
+                                                <div class="product-body">
+                                                    <h3 class="product-title">
+                                                        <a href="/product/<%= item.product._id %>"><%= item.product.name %></a>
+                                                    </h3>
+                                                    
+                                                    <div class="product-price">
+                                                        $<%= item.price.toFixed(2) %> x <%= item.quantity %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Back to Orders -->
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="text-center mt-4">
+                        <a href="/dashboard#tab-orders" class="btn btn-outline-primary">
+                            <i class="icon-long-arrow-left"></i> Back to Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

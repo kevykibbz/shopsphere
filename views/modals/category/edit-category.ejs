@@ -1,0 +1,334 @@
+<!-- Edit Category Modal -->
+<div
+  class="modal fade"
+  id="editCategoryModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editCategoryModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"><i class="icon-close"></i></span>
+        </button>
+
+        <div class="form-box">
+          <form id="edit-category-form" enctype="multipart/form-data">
+            <h5 class="modal-title" id="editCategoryModalLabel">
+              Edit Category
+            </h5>
+
+            <!-- Category Name Input -->
+            <div class="form-group">
+              <label for="edit-category-name">Category name *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="edit-category-name"
+                name="category-name"
+                value="<%= category.name %>"
+                required
+              />
+              <input
+                type="text"
+                class="form-control"
+                id="category-id"
+                name="category-id"
+                value="<%= category._id %>"
+                hidden
+              />
+              <span id="edit-category-name-error" class="text-danger"></span>
+            </div>
+
+            <!-- Image Upload Input -->
+            <div class="form-group">
+              <label for="edit-category-image">Category Image </label>
+              <input
+                type="file"
+                class="form-control"
+                id="edit-category-image"
+                name="category-image"
+                accept="image/*"
+              />
+              <span id="edit-category-image-error" class="text-danger"></span>
+            </div>
+
+            <!-- Preview Uploaded Image -->
+            <div class="form-group text-center">
+              <img
+                id="edit-image-preview"
+                src="#"
+                alt="Preview"
+                class="img-thumbnail d-none"
+                width="150"
+              />
+            </div>
+
+            <!-- Colors Input -->
+            <div class="form-group">
+              <label for="edit-colors">Colors (comma-separated)</label>
+              <input
+                type="text"
+                class="form-control"
+                id="edit-colors"
+                name="colors"
+                placeholder="e.g., Red, Blue, Green"
+              />
+            </div>
+
+            <!-- Sizes Input -->
+            <div class="form-group">
+              <label for="edit-sizes">Sizes (comma-separated)</label>
+              <input
+                type="text"
+                class="form-control"
+                id="edit-sizes"
+                name="sizes"
+                placeholder="e.g., S, M, L, XL"
+              />
+            </div>
+
+            <!-- Inner Categories Input -->
+            <div class="form-group">
+              <label for="edit-inner-categories"
+                >Inner Categories (comma-separated)</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="edit-inner-categories"
+                name="inner-categories"
+                placeholder="e.g., T-Shirts, Dresses, Shoes"
+              />
+            </div>
+
+            <!-- Brands Input -->
+            <div class="form-group">
+              <label for="edit-brands">Brands (comma-separated)</label>
+              <input
+                type="text"
+                class="form-control"
+                id="edit-brands"
+                name="brands"
+                placeholder="e.g., Gucci, Nike, Adidas"
+              />
+            </div>
+
+            <!-- Price Range Input -->
+            <div class="form-group">
+              <label for="edit-price-range">Price Range</label>
+              <div class="row">
+                <div class="col">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="edit-price-range-min"
+                    name="price-range-min"
+                    placeholder="Min"
+                  />
+                </div>
+                <div class="col">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="edit-price-range-max"
+                    name="price-range-max"
+                    placeholder="Max"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-footer">
+              <button
+                type="submit"
+                id="edit-category-btn"
+                class="btn btn-outline-primary-2 cursor-pointer"
+              >
+                <span>UPDATE CATEGORY</span>
+                <i class="icon-long-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const editCategoryForm = document.getElementById("edit-category-form");
+    const editCategoryInput = document.getElementById("edit-category-name");
+    const editCategoryError = document.getElementById(
+      "edit-category-name-error"
+    );
+    const editImageInput = document.getElementById("edit-category-image");
+    const editImageError = document.getElementById("edit-category-image-error");
+    const editImagePreview = document.getElementById("edit-image-preview");
+    const editColorsInput = document.getElementById("edit-colors");
+    const editSizesInput = document.getElementById("edit-sizes");
+    const editInnerCategoriesInput = document.getElementById(
+      "edit-inner-categories"
+    );
+    const editBrandsInput = document.getElementById("edit-brands");
+    const editPriceRangeMinInput = document.getElementById(
+      "edit-price-range-min"
+    );
+    const editPriceRangeMaxInput = document.getElementById(
+      "edit-price-range-max"
+    );
+    const editSubmitButton = document.getElementById("edit-category-btn");
+    const editButtonText = editSubmitButton.innerHTML; // Store original button text
+    const categoryId = document.getElementById("category-id").value;
+
+    // Disable button initially
+    editSubmitButton.disabled = true;
+
+    // Function to validate category name
+    function validateCategory() {
+      const categoryValue = editCategoryInput.value.trim();
+
+      if (categoryValue.length === 0) {
+        editCategoryError.innerHTML = `⚠️ Category name cannot be empty`;
+      } else if (categoryValue.length < 3) {
+        editCategoryError.innerHTML = `⚠️ Category name must be at least 3 characters`;
+      } else {
+        editCategoryError.innerHTML = "";
+      }
+
+      // Enable button only if category name is valid
+      editSubmitButton.disabled = categoryValue.length < 3;
+    }
+
+    // Function to validate image (optional)
+    function validateImage(file) {
+      if (!file) {
+        editImageError.innerHTML = ""; // No error, as image is optional
+        return true;
+      }
+
+      const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+      if (!validTypes.includes(file.type)) {
+        editImageError.innerHTML = `⚠️ Only JPG, JPEG, and PNG formats allowed`;
+        return false;
+      }
+
+      editImageError.innerHTML = "";
+      return true;
+    }
+
+    // Show image preview
+    editImageInput.addEventListener("change", function () {
+      const file = editImageInput.files[0];
+      if (file && validateImage(file)) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          editImagePreview.src = e.target.result;
+          editImagePreview.classList.remove("d-none");
+        };
+        reader.readAsDataURL(file);
+      } else {
+        editImagePreview.classList.add("d-none");
+      }
+    });
+
+    // Listen for input changes
+    editCategoryInput.addEventListener("input", validateCategory);
+
+    // Handle form submission
+    editCategoryForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const categoryName = editCategoryInput.value.trim();
+      const imageFile = editImageInput.files[0];
+      const colors = editColorsInput.value; // Send raw string
+      const sizes = editSizesInput.value; // Send raw string
+      const innerCategories = editInnerCategoriesInput.value; // Send raw string
+      const brands = editBrandsInput.value; // Send raw string
+      const priceRange = {
+        min: parseFloat(editPriceRangeMinInput.value),
+        max: parseFloat(editPriceRangeMaxInput.value),
+      };
+
+      if (categoryName.length < 3) {
+        return;
+      }
+
+      try {
+        // Show loading state
+        editSubmitButton.disabled = true;
+        editSubmitButton.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Updating...`;
+
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append("name", categoryName);
+        if (imageFile) {
+          formData.append("image", imageFile); // Only send image if provided
+        }
+        formData.append("colors", colors); // Send raw string
+        formData.append("sizes", sizes); // Send raw string
+        formData.append("innerCategories", innerCategories); // Send raw string
+        formData.append("brands", brands); // Send raw string
+        formData.append("priceRange", JSON.stringify(priceRange)); // Send as JSON
+
+        // Send PUT request to update category
+        const response = await fetch(`/api/categories/update/${categoryId}`, {
+          method: "PUT",
+          credentials: "include",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to update category.");
+        }
+
+        // Success Notification
+        showToast("Category updated successfully!", "success");
+
+        // Reload to update categories
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } catch (err) {
+        showToast(err.message, "error");
+      } finally {
+        // Restore button state
+        editSubmitButton.innerHTML = editButtonText;
+        editSubmitButton.disabled = false;
+      }
+    });
+
+    // Function to populate modal with category data
+    function populateEditModal(category) {
+      editCategoryInput.value = category.name;
+      editColorsInput.value = category.colors.join(", "); // Convert array to string
+      editSizesInput.value = category.sizes.join(", "); // Convert array to string
+      editInnerCategoriesInput.value = category.innerCategories.join(", "); // Convert array to string
+      editBrandsInput.value = category.brands.join(", "); // Convert array to string
+      editPriceRangeMinInput.value = category.priceRange.min;
+      editPriceRangeMaxInput.value = category.priceRange.max;
+      editImagePreview.src = category.image || "#";
+      editImagePreview.classList.toggle("d-none", !category.image);
+    }
+
+    // Example: Open modal with category data
+    document.querySelectorAll(".edit-category-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const category = JSON.parse(btn.dataset.category);
+        populateEditModal(category);
+        $("#editCategoryModal").modal("show");
+      });
+    });
+  });
+</script>

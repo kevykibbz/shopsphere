@@ -1,0 +1,25 @@
+<script>
+  async function removeFromCart(productId) {
+    try {
+      const response = await fetch("/api/cart/remove", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showToast("Product removed from cart", "success");
+      } else {
+        showToast("Failed to remove product from cart", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("An error occurred while removing from cart", "error");
+    }
+  }
+</script>

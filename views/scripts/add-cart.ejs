@@ -1,0 +1,44 @@
+<script>
+  async function addToCart(productId, quantity) {
+    const button = event.target.closest(".btn-cart");
+    const originalContent = button.innerHTML;
+
+    try {
+      button.innerHTML = `<i class="spinner-border spinner-border-sm"></i> Adding...`;
+      button.disabled = true;
+
+      const response = await fetch("/api/cart/add", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId, quantity }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showToast("Product added to cart", "success");
+        button.innerHTML = `<small>Added to Cart</small>`;
+        button.classList.add("added");
+      } else if (response.status === 401) {
+        showToast("Unauthorized. Please log in.", "error");
+        button.innerHTML = originalContent;
+        button.disabled = false;
+      } else {
+        showToast("Failed to add product to cart", "error");
+        button.innerHTML = originalContent;
+        button.disabled = false;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("An error occurred while adding to cart", "error");
+    } finally {
+      if (!response || !response.ok) {
+        button.innerHTML = originalContent;
+        button.disabled = false;
+      }
+    }
+  }
+</script>

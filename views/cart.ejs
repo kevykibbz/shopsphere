@@ -1,0 +1,326 @@
+<section>
+    <div class="page-header text-center" style="background-image: url('/assets/images/page-header-bg.jpg')">
+      <div class="container">
+        <h1 class="page-title">Shopping Cart<span>Shop</span></h1>
+      </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+      <div class="container">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Shop</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+        </ol>
+      </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+  
+    <div class="page-content">
+      <div class="cart">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-9">
+              <table class="table table-cart table-mobile">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
+  
+                <tbody>
+                  <% if (cart && cart.length > 0) { %>
+                    <% cart.forEach(item => { %>
+                      <tr data-product-id="<%= item.product._id %>">
+                        <td class="product-col">
+                          <div class="product">
+                            <figure class="product-media">
+                              <a href="/product/<%= item.product._id %>">
+                                <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>" loading="lazy">
+                              </a>
+                            </figure>
+                            <h3 class="product-title">
+                              <a href="/product/<%= item.product._id %>"><%= item.product.name %></a>
+                            </h3><!-- End .product-title -->
+                          </div><!-- End .product -->
+                        </td>
+                        <td class="price-col">$<%= item.product.price.toFixed(2) %></td>
+                        <td class="quantity-col">
+                          <div class="cart-product-quantity">
+                            <input
+                              type="number"
+                              class="form-control"
+                              value="<%= item.quantity %>"
+                              min="1"
+                              max="10"
+                              step="1"
+                              data-decimals="0"
+                              required
+                            />
+                          </div><!-- End .cart-product-quantity -->
+                        </td>
+                        <td class="total-col">$<%= (item.product.price * item.quantity).toFixed(2) %></td>
+                        <td class="remove-col">
+                          <button class="btn-remove" onclick="removeFromCart('<%= item.product._id %>')">
+                            <i class="icon-close"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="5" class="text-center">Your cart is empty.</td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table><!-- End .table table-wishlist -->
+  
+              <div class="cart-bottom">
+                <div class="cart-discount">
+                  <form action="#">
+                    <div class="input-group">
+                      <input type="text" class="form-control" required placeholder="coupon code">
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button>
+                      </div><!-- .End .input-group-append -->
+                    </div><!-- End .input-group -->
+                  </form>
+                </div><!-- End .cart-discount -->
+  
+                <button
+                    class="btn btn-outline-dark-2"
+                    onclick="updateCart()"
+                    <%= cart && cart.length > 0 ? "" : "disabled" %>
+                    >
+                    <span>UPDATE CART</span><i class="icon-refresh"></i>
+                </button>
+              </div><!-- End .cart-bottom -->
+            </div><!-- End .col-lg-9 -->
+            <aside class="col-lg-3">
+              <div class="summary summary-cart">
+                <h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
+  
+                <table class="table table-summary">
+                  <tbody>
+                    <tr class="summary-subtotal">
+                      <td>Subtotal:</td>
+                      <td>$<%= cart ? cart.reduce((total, item) => total + (item.product.price * item.quantity), 0).toFixed(2) : "0.00" %></td>
+                    </tr><!-- End .summary-subtotal -->
+                    <tr class="summary-shipping">
+                      <td>Shipping:</td>
+                      <td>&nbsp;</td>
+                    </tr>
+  
+                    <tr class="summary-shipping-row">
+                      <td>
+                        <div class="custom-control custom-radio">
+                          <input type="radio" id="free-shipping" name="shipping" class="custom-control-input" checked>
+                          <label class="custom-control-label" for="free-shipping">Free Shipping</label>
+                        </div><!-- End .custom-control -->
+                      </td>
+                      <td>$0.00</td>
+                    </tr><!-- End .summary-shipping-row -->
+  
+                    <tr class="summary-shipping-row">
+                      <td>
+                        <div class="custom-control custom-radio">
+                          <input type="radio" id="standart-shipping" name="shipping" class="custom-control-input">
+                          <label class="custom-control-label" for="standart-shipping">Standard Shipping</label>
+                        </div><!-- End .custom-control -->
+                      </td>
+                      <td>$10.00</td>
+                    </tr><!-- End .summary-shipping-row -->
+  
+                    <tr class="summary-shipping-row">
+                      <td>
+                        <div class="custom-control custom-radio">
+                          <input type="radio" id="express-shipping" name="shipping" class="custom-control-input">
+                          <label class="custom-control-label" for="express-shipping">Express Shipping</label>
+                        </div><!-- End .custom-control -->
+                      </td>
+                      <td>$20.00</td>
+                    </tr><!-- End .summary-shipping-row -->
+  
+                    <tr class="summary-shipping-estimate">
+                      <td>Estimate for Your Country<br> <a href="/dashboard">Change address</a></td>
+                      <td>&nbsp;</td>
+                    </tr><!-- End .summary-shipping-estimate -->
+  
+                    <tr class="summary-total">
+                      <td>Total:</td>
+                      <td>$<%= cart ? cart.reduce((total, item) => total + (item.product.price * item.quantity), 0).toFixed(2) : "0.00" %></td>
+                    </tr><!-- End .summary-total -->
+                  </tbody>
+                </table><!-- End .table table-summary -->
+  
+                <button class="btn btn-outline-primary-2 btn-order btn-block" onclick="proceedToCheckout()">PROCEED TO CHECKOUT</button>
+              </div><!-- End .summary -->
+  
+              <a href="/" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
+            </aside><!-- End .col-lg-3 -->
+          </div><!-- End .row -->
+        </div><!-- End .container -->
+      </div><!-- End .cart -->
+    </div><!-- End .page-content -->
+  </section><!-- End .main -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const shippingOptions = document.querySelectorAll('input[name="shipping"]');
+      const subtotalElement = document.querySelector(".summary-subtotal td:last-child");
+      const totalElement = document.querySelector(".summary-total td:last-child");
+  
+      // Calculate the initial subtotal
+      if (subtotalElement && totalElement) {
+        const subtotal = parseFloat(subtotalElement.textContent.replace("$", ""));
+  
+        // Function to update the total
+        const updateTotal = (shippingCost) => {
+          const total = subtotal + shippingCost;
+          totalElement.textContent = `$${total.toFixed(2)}`;
+        };
+  
+        // Add event listeners to shipping options
+        shippingOptions.forEach((option) => {
+          option.addEventListener("change", (event) => {
+            // Find the closest <tr> (table row) containing the radio button
+            const shippingRow = event.target.closest("tr");
+            if (shippingRow) {
+              // Find the <td> containing the shipping cost (the last <td> in the row)
+              const shippingCostElement = shippingRow.querySelector("td:last-child");
+              if (shippingCostElement) {
+                const shippingCost = parseFloat(shippingCostElement.textContent.replace("$", ""));
+                updateTotal(shippingCost);
+              } else {
+                console.error("Shipping cost element not found in the row");
+              }
+            } else {
+              console.error("Shipping row not found");
+            }
+          });
+        });
+  
+        // Set the default shipping option (e.g., Free Shipping)
+        const defaultShippingOption = document.querySelector('input[name="shipping"]:checked');
+        if (defaultShippingOption) {
+          const defaultShippingRow = defaultShippingOption.closest("tr");
+          if (defaultShippingRow) {
+            const defaultShippingCostElement = defaultShippingRow.querySelector("td:last-child");
+            if (defaultShippingCostElement) {
+              const defaultShippingCost = parseFloat(defaultShippingCostElement.textContent.replace("$", ""));
+              updateTotal(defaultShippingCost);
+            } else {
+              console.error("Default shipping cost element not found");
+            }
+          } else {
+            console.error("Default shipping row not found");
+          }
+        }
+      } else {
+        console.error("Subtotal or total element not found");
+      }
+    });
+  </script>
+  <script>
+    async function updateCart() {
+      const updateCartButton = document.querySelector(".btn.btn-outline-dark-2"); 
+      const originalButtonContent = updateCartButton.innerHTML; 
+  
+      try {
+        updateCartButton.innerHTML = `<span>Updating...</span><i class="icon-refresh"></i>`;
+        updateCartButton.disabled = true;
+  
+        const cartItems = document.querySelectorAll("tr[data-product-id]");
+        const updates = [];
+  
+        cartItems.forEach((row) => {
+          const productId = row.getAttribute("data-product-id");
+          const quantityInput = row.querySelector("input[type='number']");
+          const quantity = parseInt(quantityInput.value, 10);
+  
+          if (quantity > 0) {
+            updates.push({ productId, quantity });
+          }
+        });
+  
+        const response = await fetch("/api/cart/update", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ updates }),
+        });
+  
+        const result = await response.json();
+  
+        if (response.ok) {
+          showToast("Cart updated successfully", "success");
+          location.reload(); // Reload the page to reflect changes
+        } else {
+          showToast("Failed to update cart", "error");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        showToast("An error occurred while updating the cart", "error");
+      } finally {
+        updateCartButton.innerHTML = originalButtonContent;
+        updateCartButton.disabled = false;
+      }
+    }
+  </script>
+  <script>
+    async function proceedToCheckout() {
+      const checkoutButton = document.querySelector(".btn.btn-outline-primary-2.btn-order.btn-block");
+      const originalButtonContent = checkoutButton.innerHTML;
+  
+      try {
+        // Update the button to show "Processing..." and disable it
+        checkoutButton.innerHTML = `<span>Processing...</span>`;
+        checkoutButton.disabled = true;
+  
+        const cartItems = document.querySelectorAll("tr[data-product-id]");
+        const updates = [];
+  
+        cartItems.forEach((row) => {
+          const productId = row.getAttribute("data-product-id");
+          const quantityInput = row.querySelector("input[type='number']");
+          const quantity = parseInt(quantityInput.value, 10);
+  
+          if (quantity > 0) {
+            updates.push({ productId, quantity });
+          }
+        });
+  
+        // Get the selected shipping option and cost
+        const selectedShipping = document.querySelector("input[name='shipping']:checked");
+        const shippingOption = selectedShipping ? selectedShipping.nextElementSibling.innerText : "Free Shipping";
+        const shippingCost = shippingOption === "Free Shipping" ? 0 : shippingOption === "Standard Shipping" ? 10 : 20;
+  
+        // Send a request to update the cart (if updates are needed)
+        if (updates.length > 0 || shippingOption) {
+          const updateResponse = await fetch("/api/cart/update", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ updates, shippingOption, shippingCost }),
+          });
+  
+          if (!updateResponse.ok) {
+            throw new Error("Failed to update cart");
+          }
+        }
+  
+        // Redirect to the checkout page
+        window.location.href = "/checkout";
+      } catch (error) {
+        console.error("Error:", error);
+        showToast("An error occurred while processing your request", "error");
+        checkoutButton.innerHTML = originalButtonContent;
+        checkoutButton.disabled = false;
+      }
+    }
+  </script>

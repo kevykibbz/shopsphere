@@ -1,0 +1,283 @@
+<!-- Edit Product Modal -->
+<div
+  class="modal fade"
+  id="editProductModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editProductModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"><i class="icon-close"></i></span>
+        </button>
+
+        <div class="form-box">
+          <form id="edit-product-form" enctype="multipart/form-data">
+            <h5 class="modal-title" id="editProductModalLabel">
+              Edit Product: <%= product.name %>
+            </h5>
+
+            <!-- Hidden field for product ID -->
+            <input type="hidden" id="edit-product-id" name="id" value="<%= product._id %>" />
+
+            <!-- Product Name -->
+            <div class="form-group">
+              <label for="edit-product-name">Product Name *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="edit-product-name"
+                name="name"
+                value="<%= product.name %>"
+                required
+              />
+              <span id="edit-product-name-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Price -->
+            <div class="form-group">
+              <label for="edit-product-price">Price *</label>
+              <input
+                type="number"
+                class="form-control"
+                id="edit-product-price"
+                name="price"
+                value="<%= product.price %>"
+                required
+              />
+              <span id="edit-product-price-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Category -->
+            <div class="form-group">
+              <label for="edit-product-category">Category *</label>
+              <select
+                class="form-control"
+                id="edit-product-category"
+                name="category"
+                required
+              >
+                <option value="">Select a category</option>
+                <% categories.forEach(category => { %>
+                  <option value="<%= category._id %>" <%= product.category._id.toString() === category._id.toString() ? "selected" : "" %>>
+                    <%= category.name %>
+                  </option>
+                <% }) %>
+              </select>
+              <span id="edit-product-category-error" class="text-danger"></span>
+            </div>
+
+            <!-- Super Category -->
+            <div class="form-group">
+              <label for="edit-super-category">Super Category *</label>
+              <select
+                class="form-control"
+                id="edit-super-category"
+                name="superCategory"
+                required
+              >
+                <option value="New Arrivals" <%= product.superCategory === "New Arrivals" ? "selected" : "" %>>New Arrivals</option>
+                <option value="Recommendations for You" <%= product.superCategory === "Recommendations for You" ? "selected" : "" %>>Recommendations for You</option>
+                <option value="Trending Products" <%= product.superCategory === "Trending Products" ? "selected" : "" %>>Trending Products</option>
+                <option value="Deals" <%= product.superCategory === "Deals" ? "selected" : "" %>>Deals</option>
+                <option value="Outlets" <%= product.superCategory === "Outlets" ? "selected" : "" %>>Outlets</option>
+              </select>
+              <span id="edit-super-category-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Description -->
+            <div class="form-group">
+              <label for="edit-product-description">Description *</label>
+              <textarea
+                class="form-control"
+                id="edit-product-description"
+                name="description"
+                rows="3"
+                required
+              ><%= product.description %></textarea>
+              <span id="edit-product-description-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Colors -->
+            <div class="form-group">
+              <label for="edit-product-colors">Colors</label>
+              <select
+                class="form-control"
+                id="edit-product-colors"
+                name="colors"
+                multiple
+              >
+                <% product.category.colors.forEach(color => { %>
+                  <option value="<%= color %>" <%= product.colors.includes(color) ? "selected" : "" %>>
+                    <%= color %>
+                  </option>
+                <% }) %>
+              </select>
+              <span id="edit-product-colors-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Sizes -->
+            <div class="form-group">
+              <label for="edit-product-sizes">Sizes</label>
+              <select
+                class="form-control"
+                id="edit-product-sizes"
+                name="sizes"
+                multiple
+              >
+                <% product.category.sizes.forEach(size => { %>
+                  <option value="<%= size %>" <%= product.sizes.includes(size) ? "selected" : "" %>>
+                    <%= size %>
+                  </option>
+                <% }) %>
+              </select>
+              <span id="edit-product-sizes-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Brands -->
+            <div class="form-group">
+              <label for="edit-product-brands">Brands</label>
+              <select
+                class="form-control"
+                id="edit-product-brands"
+                name="brands"
+                multiple
+              >
+                <% product.category.brands.forEach(brand => { %>
+                  <option value="<%= brand %>" <%= product.brands.includes(brand) ? "selected" : "" %>>
+                    <%= brand %>
+                  </option>
+                <% }) %>
+              </select>
+              <span id="edit-product-brands-error" class="text-danger"></span>
+            </div>
+
+            <!-- Inner Category -->
+            <div class="form-group">
+              <label for="edit-inner-category">Inner Category</label>
+              <select
+                class="form-control"
+                id="edit-inner-category"
+                name="innerCategory"
+                multiple
+              >
+                <% product.category.innerCategories.forEach(ic => { %>
+                  <option value="<%= ic %>" <%= product.innerCategory.includes(ic) ? "selected" : "" %>>
+                    <%= ic %>
+                  </option>
+                <% }) %>
+              </select>
+              <span id="edit-inner-category-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Tags -->
+            <div class="form-group">
+              <label for="product-tags">Tags</label>
+              <select class="form-control" id="edit-product-tags" name="tags" multiple>
+                <option value="">Select tags</option>
+                <option value="top">Top</option>
+                <option value="sale">Sale</option>
+                <option value="new">New</option>
+              </select>
+              <span id="product-tags-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Image -->
+            <div class="form-group">
+              <label for="edit-product-image">Product Image</label>
+              <input
+                type="file"
+                class="form-control"
+                id="edit-product-image"
+                name="images"
+                accept="image/*"
+                multiple
+              />
+              <span id="edit-product-image-error" class="text-danger"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-footer">
+              <button
+                type="submit"
+                id="edit-product-btn"
+                class="btn btn-outline-primary-2 cursor-pointer"
+              >
+                <span>UPDATE PRODUCT</span>
+                <i class="icon-long-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    // Edit Product
+    document.querySelectorAll(".edit-product").forEach((button) => {
+      button.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const productId = button.getAttribute("data-product-id");
+        const productTags = document.getElementById("edit-product-tags");
+
+        $("#editProductModal").modal("show");
+  
+        try {
+          // Update the form to handle editing
+          const form = document.getElementById("edit-product-form");
+          const submitButton = document.getElementById("edit-product-btn");
+  
+          form.onsubmit = async (e) => {
+            e.preventDefault();
+  
+            // Disable the submit button and show loading effect
+            submitButton.disabled = true;
+            submitButton.innerHTML = `
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Updating...
+            `;
+  
+            const formData = new FormData(form);
+            const selectedTags = Array.from(productTags.selectedOptions).map(option => option.value).join(',');
+            formData.append("tags", selectedTags);
+
+            try {
+              const response = await fetch(`/api/products/${productId}`, {
+                method: "PATCH",
+                credentials:"include",
+                body: formData,
+              });
+  
+              if (response.ok) {
+                showToast("Product updated successfully","success");
+                setTimeout(()=>window.location.reload(),1500)
+              } else {
+                showToast("Failed to update product","error");
+              }
+            } catch (err) {
+              console.error("Error updating product:", err);
+              showToast("An error occurred while updating the product","error");
+            } finally {
+              // Re-enable the submit button and reset its text
+              submitButton.disabled = false;
+              submitButton.innerHTML = `
+                <span>UPDATE PRODUCT</span>
+                <i class="icon-long-arrow-right"></i>
+              `;
+            }
+          };
+        } catch (err) {
+          console.error("Error fetching product details:", err);
+        }
+      });
+    });
+  </script>

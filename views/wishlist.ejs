@@ -1,0 +1,223 @@
+<section>
+  <div
+    class="page-header text-center"
+    style="background-image: url('/assets/images/page-header-bg.jpg')"
+  >
+    <div class="container">
+      <h1 class="page-title">Wishlist<span>Shop</span></h1>
+    </div>
+    <!-- End .container -->
+  </div>
+  <!-- End .page-header -->
+  <nav aria-label="breadcrumb" class="breadcrumb-nav">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Shop</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+      </ol>
+    </div>
+    <!-- End .container -->
+  </nav>
+  <!-- End .breadcrumb-nav -->
+
+  <div class="page-content">
+    <div class="container">
+      <table class="table table-wishlist table-mobile">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Stock Status</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% wishlistItems.forEach(item => { %>
+          <tr>
+            <td class="product-col">
+              <div class="product">
+                <figure class="product-media">
+                  <a href="/product/<%= item.product._id %>">
+                    <% if (item.product.images && item.product.images.length >
+                    0) { %>
+                    <img
+                      src="<%= item.product.images[0] %>"
+                      alt="<%= item.product.name %>"
+                    />
+                    <% } else { %>
+                    <img
+                      src="/assets/images/placeholder.jpg"
+                      alt="No image available"
+                    />
+                    <% } %>
+                  </a>
+                </figure>
+
+                <h3 class="product-title">
+                  <a href="/product/<%= item.product._id %>"
+                    ><%= item.product.name %></a
+                  >
+                </h3>
+                <!-- End .product-title -->
+              </div>
+              <!-- End .product -->
+            </td>
+            <td class="price-col">$<%= item.product.price %></td>
+            <td class="stock-col">
+              <span
+                class="<%= item.product.stockStatus === 'In Stock' ? 'in-stock' : 'Out of stock' %>"
+              >
+                <%= item.product.stockStatus %>
+              </span>
+            </td>
+            <!-- <td class="action-col">
+              <div class="dropdown">
+                <button
+                  class="btn btn-block btn-outline-primary-2"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i class="icon-list-alt"></i>Select Options
+                </button>
+
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="#"><%= item.priority %></a>
+                  <a class="dropdown-item" href="#">Another option</a>
+                  <a class="dropdown-item" href="#">The best option</a>
+                </div>
+              </div>
+            </td> -->
+            <td class="action-col">
+                <button
+                  class="btn btn-block btn-outline-primary-2"
+                  <%= item.product.stockStatus === "Out of Stock" ? "disabled" : "" %>
+                  onclick="addToCart('<%= item.product._id %>', 1)"
+                >
+                  <i class="icon-cart-plus"></i>
+                  <%= item.product.stockStatus === "Out of Stock" ? "Out of Stock" : "Add to Cart" %>
+                </button>
+            </td>
+            <td class="remove-col">
+              <button
+                class="btn-remove"
+                onclick="removeFromWishlist('<%= item._id %>')"
+              >
+                <i class="icon-close"></i>
+              </button>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <!-- End .table table-wishlist -->
+      <div class="wishlist-share">
+        <div class="social-icons social-icons-sm mb-2">
+          <label class="social-label">Share on:</label>
+          <a href="#" class="social-icon" title="Facebook" target="_blank"
+            ><i class="icon-facebook-f"></i
+          ></a>
+          <a href="#" class="social-icon" title="Twitter" target="_blank"
+            ><i class="icon-twitter"></i
+          ></a>
+          <a href="#" class="social-icon" title="Instagram" target="_blank"
+            ><i class="icon-instagram"></i
+          ></a>
+          <a href="#" class="social-icon" title="Youtube" target="_blank"
+            ><i class="icon-youtube"></i
+          ></a>
+          <a href="#" class="social-icon" title="Pinterest" target="_blank"
+            ><i class="icon-pinterest"></i
+          ></a>
+        </div>
+        <!-- End .soial-icons -->
+      </div>
+      <!-- End .wishlist-share -->
+    </div>
+    <!-- End .container -->
+  </div>
+  <!-- End .page-content -->
+</section>
+<!-- End .main -->
+<script>
+  async function removeFromWishlist(wishlistItemId) {
+    // Show a confirmation popup
+    const isConfirmed = confirm(
+      "Are you sure you want to remove this item from your wishlist?"
+    );
+    if (!isConfirmed) {
+      return; // Stop if the user cancels
+    }
+
+    try {
+      // Send a DELETE request to the server
+      const response = await fetch(`/wishlist/delete/${wishlistItemId}`, {
+        method: "DELETE",
+        credentials:"include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to remove item from wishlist");
+      }
+
+      // Remove the item from the DOM
+      const row = document
+        .querySelector(
+          `button[onclick="removeFromWishlist('${wishlistItemId}')"]`
+        )
+        .closest("tr");
+      if (row) {
+        row.remove();
+      }
+
+      showToast("Item removed from wishlist successfully","success");
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("An error occurred while removing the item","error");
+    }
+  }
+</script>
+<script>
+    async function addToCart(productId, quantity) {
+      const button = event.target; 
+      const originalContent = button.innerHTML; 
+      const wishlistItem = button.closest(".wishlist-item");
+  
+      try {
+        button.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Adding...`;
+        button.disabled = true; 
+  
+        const response = await fetch("/api/cart/add", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ productId, quantity }),
+        });
+  
+        const result = await response.json();
+  
+        if (response.ok) {
+          showToast("Product added to cart", "success");
+          if (wishlistItem) {
+            wishlistItem.remove(); 
+          }
+        } else {
+          showToast("Failed to add product to cart", "error");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        showToast("An error occurred while adding to cart", "error");
+      } finally {
+        button.innerHTML = originalContent;
+        button.disabled = false;
+      }
+    }
+  </script>

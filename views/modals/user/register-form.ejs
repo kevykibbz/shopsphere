@@ -1,0 +1,44 @@
+<form class="register-form">
+    <div class="form-group">
+      <label for="register-email">Your email address *</label>
+      <input
+        type="email"
+        class="form-control register-email"
+        name="register-email"
+        required
+      />
+      <span class="text-danger register-email-error"></span>
+    </div>
+    <!-- End .form-group -->
+
+    <div class="form-group">
+      <label for="register-password">Password *</label>
+      <input
+        type="password"
+        class="form-control register-password"
+        name="register-password"
+        required
+      />
+      <span  class="text-danger register-password-error"></span>
+    </div>
+    <!-- End .form-group -->
+
+    <div class="form-footer">
+      <button type="submit" class="btn btn-outline-primary-2 cursor-pointer">
+        <span>SIGN UP</span>
+        <i class="icon-long-arrow-right"></i>
+      </button>
+
+      <div class="custom-control custom-checkbox">
+        <input
+          type="checkbox"
+          class="custom-control-input"
+          id="register-policy"
+          required
+        />
+        <label style="cursor:pointer;" for="register-policy" class="custom-control-label cursor-pointer" >I agree to the <a href="#">privacy policy</a> *</label>
+      </div>
+      <!-- End .custom-checkbox -->
+    </div>
+    <!-- End .form-footer -->
+  </form>

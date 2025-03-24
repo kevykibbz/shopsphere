@@ -1,0 +1,62 @@
+# Register a New User
+### 
+POST http://localhost:3000/api/users/register
+Content-Type: application/json  
+
+{
+    "email": "test@gmail.com",
+    "password": "password123"
+}
+
+# Login a User
+### 
+POST http://localhost:3000/api/users/login
+Content-Type: application/json  
+
+{
+    "email": "test1234@gmail.com",
+    "password": "password123"
+}
+
+
+# Add a new category
+### 
+POST http://localhost:3000/api/categories/new
+Content-Type: application/json  
+
+{
+    "name": "Fittings"
+}
+
+
+# Add a new product
+### 
+POST http://localhost:3000/api/products/new
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Wireless Headphones
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="price"
+
+99.99
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="category"
+
+64f1b2c8e4b0f5a3d4f5e6a7
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="superCategory"
+
+Trending Products
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="tags"
+
+sale,top
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="headphones.jpg"
+Content-Type: image/jpeg
+
+< E:\kevy\tasks\Web\Davies\Task A\ShopSphere\public\assets\images\demos\demo-4\products\product-1.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

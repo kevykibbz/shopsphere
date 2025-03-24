@@ -1,0 +1,44 @@
+<form class="signin-form">
+    <div class="form-group">
+      <label for="signin-email">Email address *</label>
+      <input
+        type="text"
+        class="form-control signin-email"
+        name="signin-email"
+        required
+      />
+      <span  class="text-danger signin-email-error"></span>
+    </div>
+    <!-- End .form-group -->
+
+    <div class="form-group">
+      <label for="signin-password">Password *</label>
+      <input
+        type="password"
+        class="form-control signin-password"
+        name="signin-password"
+        required
+      />
+      <span class="text-danger signin-password-error"></span>
+    </div>
+    <!-- End .form-group -->
+
+    <div class="form-footer">
+      <button type="submit" class="btn btn-outline-primary-2 cursor-pointer">
+        <span>LOG IN</span>
+        <i class="icon-long-arrow-right"></i>
+      </button>
+
+      <div class="custom-control custom-checkbox">
+        <input
+          type="checkbox"
+          class="custom-control-input signin-remember"
+        />
+        <label class="custom-control-label cursor-pointer" for="signin-remember">Remember Me</label>
+      </div>
+      <!-- End .custom-checkbox -->
+
+      <a href="#" class="forgot-link">Forgot Your Password?</a>
+    </div>
+    <!-- End .form-footer -->
+  </form>

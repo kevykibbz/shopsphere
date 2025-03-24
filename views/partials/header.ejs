@@ -1,0 +1,393 @@
+<header class="header header-intro-clearance header-4">
+  <div class="header-top">
+    <div class="container">
+      <div class="header-left">
+        <a href="tel:<%= phone_number %>"
+          ><i class="icon-phone"></i>Call: <%= phone_number %></a
+        >
+      </div>
+      <!-- End .header-left -->
+
+      <div class="header-right">
+        <ul class="top-menu">
+          <li>
+            <a href="#">Links</a>
+            <ul>
+              <li>
+                <div class="header-dropdown">
+                  <a href="#">USD</a>
+                  <div class="header-menu">
+                    <ul>
+                      <li><a href="#">Eur</a></li>
+                      <li><a href="#">Usd</a></li>
+                    </ul>
+                  </div>
+                  <!-- End .header-menu -->
+                </div>
+              </li>
+              <li>
+                <div class="header-dropdown">
+                  <a href="#">English</a>
+                  <div class="header-menu">
+                    <ul>
+                      <li><a href="#">English</a></li>
+                      <li><a href="#">French</a></li>
+                      <li><a href="#">Spanish</a></li>
+                    </ul>
+                  </div>
+                  <!-- End .header-menu -->
+                </div>
+              </li>
+              <li>
+                <% if (!user) { %>
+                  <a href="#signin-modal" data-toggle="modal"
+                  >Sign in / Sign up</a
+                >
+                <% } %>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <!-- End .top-menu -->
+      </div>
+      <!-- End .header-right -->
+    </div>
+    <!-- End .container -->
+  </div>
+  <!-- End .header-top -->
+
+  <div class="header-middle">
+    <div class="container">
+      <div class="header-left">
+        <button class="mobile-menu-toggler">
+          <span class="sr-only">Toggle mobile menu</span>
+          <i class="icon-bars"></i>
+        </button>
+        <a
+          href="/"
+          class="logo"
+          style="display: flex; align-items: center; justify-content: center"
+        >
+          <img src="/assets/images/ecommerce-64.png" alt="Shop Sphere Logo" />
+          <h3>Shop Sphere</h3>
+        </a>
+      </div>
+      <!-- End .header-left -->
+
+      <div class="header-center">
+        <div
+          class="header-search header-search-extended header-search-visible d-none d-lg-block"
+        >
+          <a href="#" class="search-toggle" role="button"
+            ><i class="icon-search"></i
+          ></a>
+          <%- include('search-form-desktop') %>
+        </div>
+        <!-- End .header-search -->
+      </div>
+
+      <div class="header-right">
+        <div class="wishlist">
+          <a href="/wishlist" title="Wishlist">
+            <div class="icon">
+              <i class="icon-heart-o"></i>
+              <span class="wishlist-count badge"><%= wishlist.length %></span>
+            </div>
+            <p>Wishlist</p>
+          </a>
+        </div>
+        <!-- End .compare-dropdown -->
+
+        <div class="dropdown cart-dropdown">
+          <a
+            href="#"
+            class="dropdown-toggle"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            data-display="static"
+          >
+            <div class="icon">
+              <i class="icon-shopping-cart"></i>
+              <span class="cart-count"><%= cart ? cart.length : 0 %> </span>
+            </div>
+            <p>Cart</p>
+          </a>
+
+          <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-cart-products">
+              <% if (cart && cart.length > 0) { %>
+                <% cart.forEach(item => { %>
+                  <div class="product">
+                    <div class="product-cart-details">
+                      <h4 class="product-title">
+                        <a href="/product/<%= item.product._id %>">
+                          <%= item.product.name %>
+                        </a>
+                      </h4>
+          
+                      <span class="cart-product-info">
+                        <span class="cart-product-qty"><%= item.quantity %></span>
+                        x $<%= item.product.price.toFixed(2) %>
+                      </span>
+                    </div>
+                    <!-- End .product-cart-details -->
+          
+                    <figure class="product-image-container">
+                      <a href="/product/<%= item.product._id %>" class="product-image">
+                        <img
+                          src="<%= item.product.images[0] %>"
+                          alt="<%= item.product.name %>"
+                          loading="lazy"
+                        />
+                      </a>
+                    </figure>
+                    <a href="#" class="btn-remove" title="Remove Product"
+                      onclick="removeFromCart('<%= item.product._id %>')"
+                    >
+                      <i class="icon-close"></i>
+                    </a>
+                  </div>
+                  <!-- End .product -->
+                <% }) %>
+              <% } else { %>
+                <p>Your cart is empty.</p>
+              <% } %>
+            </div>
+            <!-- End .cart-product -->
+          
+            <div class="dropdown-cart-total">
+              <span>Total</span>
+              <span class="cart-total-price">
+                $<%= cart ? cart.reduce((total, item) => total + (item.product.price * item.quantity), 0).toFixed(2) : "0.00" %>
+              </span>
+            </div>
+            <!-- End .dropdown-cart-total -->
+          
+            <div class="dropdown-cart-action">
+              <a href="/cart" class="btn btn-primary">View Cart</a>
+              <a href="/checkout" class="btn btn-outline-primary-2">
+                <span>Checkout</span>
+                <i class="icon-long-arrow-right"></i>
+              </a>
+            </div>
+            <!-- End .dropdown-cart-total -->
+          </div>
+          <!-- End .dropdown-menu -->
+        </div>
+        <!-- End .cart-dropdown -->
+        <% if (isAuthenticated) { %>
+          <div class="wishlist">
+            <a href="/dashboard" title="dashboard">
+              <div class="icon">
+                <i class="icon-user"></i>
+              </div>
+              <p>Dashboard</p>
+            </a>
+          </div>
+        <% } %>
+      </div>
+      <!-- End .header-right -->
+    </div>
+    <!-- End .container -->
+  </div>
+  <!-- End .header-middle -->
+
+  <div class="header-bottom sticky-header">
+    <div class="container">
+      <div class="header-left">
+        <div class="dropdown category-dropdown">
+          <a
+            href="#"
+            class="dropdown-toggle"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            data-display="static"
+            title="Browse Categories"
+          >
+            Browse Categories <i class="icon-angle-down"></i>
+          </a>
+          <div class="dropdown-menu">
+            <nav class="side-nav">
+              <ul class="menu-vertical sf-arrows">
+                <li class="item-lead"><a href="#">Daily offers</a></li>
+                <li class="item-lead"><a href="#">Gift Ideas</a></li>
+                <% if (typeof categories !== "undefined" && categories.length >
+                0) { %> <% categories.forEach(category => { %> <% if
+                (!category.image) { %>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <a href="/category/<%= category._id %>"
+                    ><%= category.name %></a
+                  >
+                  <% if (user && user.role === 'admin') { %>
+                  <i
+                    class="fa fa-trash trash-icon"
+                    style="
+                      cursor: pointer;
+                      margin-left: 10px;
+                      color: #39f;
+                      cursor: pointer;
+                      font-size: inherit;
+                    "
+                    onclick="confirmDeleteCategory('<%= category._id %>')"
+                  ></i>
+                  <% } %>
+                </li>
+                <% } %> <% }) %> <% } %> <% if (user && user.role === 'admin') {
+                %>
+                <li>
+                  <a
+                    href="#"
+                    data-toggle="modal"
+                    data-target="#addCategoryModal"
+                    style="cursor: pointer"
+                  >
+                    <i class="icon-plus"></i> Add Category
+                  </a>
+                </li>
+                <% } %>
+              </ul>
+            </nav>
+            <!-- End .side-nav -->
+          </div>
+          <!-- End .dropdown-menu -->
+        </div>
+        <!-- End .category-dropdown -->
+      </div>
+      <!-- End .header-left -->
+
+      <div class="header-center">
+        <nav class="main-nav">
+          <ul class="menu sf-arrows">
+            <li>
+              <a href="#" class="sf-with-ul">Pages</a>
+
+              <ul>
+                <li>
+                  <a href="/about" class="sf-with-ul">About</a>
+                </li>
+                <li>
+                  <a href="/contact" class="sf-with-ul">Contact</a>
+                </li>
+                <li><a href="/faq">FAQs</a></li>
+              </ul>
+            </li>
+          </ul>
+          <!-- End .menu -->
+        </nav>
+        <!-- End .main-nav -->
+      </div>
+      <!-- End .header-center -->
+
+      <div class="header-right">
+        <i class="la la-lightbulb-o"></i>
+        <p>Clearance<span class="highlight">&nbsp;Up to 30% Off</span></p>
+      </div>
+    </div>
+    <!-- End .container -->
+  </div>
+  <!-- End .header-bottom -->
+</header>
+<script>
+  function confirmDeleteCategory(categoryId) {
+    const isConfirmed = confirm(
+      "Are you sure you want to delete this category?"
+    );
+    if (isConfirmed) {
+      fetch(`/api/categories/delete/${categoryId}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message === "Category deleted successfully") {
+            showToast("Category deleted successfully", "success");
+            window.location.reload();
+          } else {
+            showToast("Failed to delete category", "error");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          showToast("An error occurred while deleting the category", "error");
+        });
+    }
+  }
+</script>
+
+<script>
+  async function removeFromCart(productId) {
+    const btnRemove = event.target.closest(".btn-remove"); 
+    const productElement = btnRemove ? btnRemove.closest(".product") : null; 
+    const tableRow = btnRemove ? btnRemove.closest("tr[data-product-id]") : null; 
+
+    try {
+      const response = await fetch("/api/cart/remove", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showToast("Product removed from cart", "success");
+
+        // Remove the product element from the DOM (if it exists)
+        if (productElement) {
+          productElement.remove();
+        }
+
+        // Remove the table row from the DOM (if it exists)
+        if (tableRow) {
+          tableRow.remove();
+
+          // Check if the cart is empty
+          const cartTableBody = document.querySelector("table tbody");
+          const remainingRows = cartTableBody.querySelectorAll("tr[data-product-id]");
+
+          if (remainingRows.length === 0) {
+            // Show the "Your cart is empty" message
+            cartTableBody.innerHTML = `
+              <tr>
+                <td colspan="5" class="text-center">Your cart is empty.</td>
+              </tr>
+            `;
+          }
+        }
+
+        // Update the cart count
+        updateCartCount();
+      } else {
+        showToast("Failed to remove product from cart", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("An error occurred while removing from cart", "error");
+    }
+  }
+
+  // Function to update the cart count
+  function updateCartCount() {
+    const cartCountElement = document.querySelector(".cart-count");
+    if (cartCountElement) {
+      const currentCount = parseInt(cartCountElement.textContent, 10);
+      cartCountElement.textContent = currentCount - 1;
+    }
+  }
+</script>

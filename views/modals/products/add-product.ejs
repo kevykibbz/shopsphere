@@ -1,0 +1,385 @@
+<!-- Add Product Modal -->
+<div
+  class="modal fade"
+  id="addProductModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addProductModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"><i class="icon-close"></i></span>
+        </button>
+
+        <div class="form-box">
+          <form id="product-form" enctype="multipart/form-data">
+            <h5 class="modal-title" id="addProductModalLabel">
+              Add New Product
+            </h5>
+
+            <!-- Product Name -->
+            <div class="form-group">
+              <label for="product-name">Product Name *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="product-name"
+                name="name"
+                required
+              />
+              <span id="product-name-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Price -->
+            <div class="form-group">
+              <label for="product-price">Price *</label>
+              <input
+                type="number"
+                class="form-control"
+                id="product-price"
+                name="price"
+                required
+              />
+              <span id="product-price-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Category -->
+            <div class="form-group">
+              <label for="product-category">Category *</label>
+              <select
+                class="form-control"
+                id="product-category"
+                name="category"
+                required
+              >
+                <option value="">Select a category</option>
+                <option value="<%= category._id %>">
+                  <%= category.name %>
+                </option>
+              </select>
+              <span id="product-category-error" class="text-danger"></span>
+            </div>
+
+            <!-- Super Category -->
+            <div class="form-group">
+              <label for="super-category">Super Category *</label>
+              <select
+                class="form-control"
+                id="super-category"
+                name="superCategory"
+                required
+              >
+                <option value="New Arrivals">New Arrivals</option>
+                <option value="Recommendations for You">
+                  Recommendations for You
+                </option>
+                <option value="Trending Products">Trending Products</option>
+                <option value="Deals">Deals</option>
+                <option value="Outlets">Outlets</option>
+              </select>
+              <span id="super-category-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Description -->
+            <div class="form-group">
+              <label for="product-description">Description *</label>
+              <textarea
+                class="form-control"
+                id="product-description"
+                name="description"
+                rows="3"
+                required
+              ></textarea>
+              <span id="product-description-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Colors -->
+            <div class="form-group">
+              <label for="product-colors">Colors</label>
+              <select
+                class="form-control"
+                id="product-colors"
+                name="colors"
+                multiple
+              >
+                <% category.colors.forEach(color => { %>
+                <option value="<%= color %>"><%= color %></option>
+                <% }) %>
+              </select>
+              <span id="product-colors-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Sizes -->
+            <div class="form-group">
+              <label for="product-sizes">Sizes</label>
+              <select
+                class="form-control"
+                id="product-sizes"
+                name="sizes"
+                multiple
+              >
+                <% category.sizes.forEach(size => { %>
+                <option value="<%= size %>"><%= size %></option>
+                <% }) %>
+              </select>
+              <span id="product-sizes-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Brands -->
+            <div class="form-group">
+              <label for="product-brands">Brands</label>
+              <select
+                class="form-control"
+                id="product-brands"
+                name="brands"
+                multiple
+              >
+                <% category.brands.forEach(brand => { %>
+                <option value="<%= brand %>"><%= brand %></option>
+                <% }) %>
+              </select>
+              <span id="product-brands-error" class="text-danger"></span>
+            </div>
+
+            <!-- Inner Category -->
+            <div class="form-group">
+              <label for="inner-category">Inner Category</label>
+              <select
+                class="form-control"
+                id="inner-category"
+                name="innerCategory"
+                multiple
+              >
+                <% category.innerCategories.forEach(ic => { %>
+                <option value="<%= ic %>"><%= ic %></option>
+                <% }) %>
+              </select>
+              <span id="inner-category-error" class="text-danger"></span>
+            </div>
+
+            <!-- Product Tags -->
+            <div class="form-group">
+              <label for="product-tags">Tags</label>
+              <select class="form-control" id="product-tags" name="tags" multiple>
+                <option value="">Select tags</option>
+                <option value="top">Top</option>
+                <option value="sale">Sale</option>
+                <option value="new">New</option>
+              </select>
+              <span id="product-tags-error" class="text-danger"></span>
+            </div>
+
+
+            <!-- Product Image -->
+            <div class="form-group">
+              <label for="product-image">Product Image</label>
+              <input
+                type="file"
+                class="form-control"
+                id="product-image"
+                name="images"
+                accept="image/*"
+                multiple
+              />
+              <span id="product-image-error" class="text-danger"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-footer">
+              <button
+                type="submit"
+                id="add-product-btn"
+                class="btn btn-outline-primary-2 cursor-pointer"
+              >
+                <span>ADD PRODUCT</span>
+                <i class="icon-long-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const productForm = document.getElementById("product-form");
+    const submitButton = document.getElementById("add-product-btn");
+    const buttonText = submitButton.innerHTML; // Store original button text
+
+    const productName = document.getElementById("product-name");
+    const productPrice = document.getElementById("product-price");
+    const productCategory = document.getElementById("product-category");
+    const superCategory = document.getElementById("super-category");
+    const productDescription = document.getElementById("product-description");
+    const productTags = document.getElementById("product-tags");
+    const productImage = document.getElementById("product-image");
+
+    const nameError = document.getElementById("product-name-error");
+    const priceError = document.getElementById("product-price-error");
+    const categoryError = document.getElementById("product-category-error");
+    const descriptionError = document.getElementById(
+      "product-description-error"
+    );
+    const tagsError = document.getElementById("product-tags-error");
+    const imageError = document.getElementById("product-image-error");
+
+    // Disable submit button initially
+    submitButton.disabled = true;
+
+    // Function to validate form
+    function validateForm() {
+      let isValid = true;
+
+      if (productName.value.trim().length < 3) {
+        nameError.innerHTML = "⚠️ Product name must be at least 3 characters.";
+        isValid = false;
+      } else {
+        nameError.innerHTML = "";
+      }
+
+      if (
+        productPrice.value.trim() === "" ||
+        parseFloat(productPrice.value) <= 0
+      ) {
+        priceError.innerHTML = "⚠️ Please enter a valid price.";
+        isValid = false;
+      } else {
+        priceError.innerHTML = "";
+      }
+
+      if (productCategory.value.trim() === "") {
+        categoryError.innerHTML = "⚠️ Please select a category.";
+        isValid = false;
+      } else {
+        categoryError.innerHTML = "";
+      }
+
+      if (productDescription.value.trim().length < 10) {
+        descriptionError.innerHTML =
+          "⚠️ Description must be at least 10 characters.";
+        isValid = false;
+      } else {
+        descriptionError.innerHTML = "";
+      }
+
+      if (productImage.files.length > 0) {
+        const file = productImage.files[0];
+        const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+        if (!allowedTypes.includes(file.type)) {
+          imageError.innerHTML = "⚠️ Only JPG, JPEG, and PNG formats allowed.";
+          isValid = false;
+        } else {
+          imageError.innerHTML = "";
+        }
+      } else {
+        imageError.innerHTML = "";
+      }
+
+      submitButton.disabled = !isValid;
+    }
+
+    // Event listeners for input validation
+    productName.addEventListener("input", validateForm);
+    productPrice.addEventListener("input", validateForm);
+    productCategory.addEventListener("change", validateForm);
+    productDescription.addEventListener("input", validateForm);
+    productImage.addEventListener("change", validateForm);
+
+    // Handle form submission
+    productForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      // Create FormData object
+      const formData = new FormData();
+      const selectedTags = Array.from(productTags.selectedOptions).map(option => option.value).join(',');
+      
+      // Append text fields
+      formData.append("name", productName.value.trim());
+      formData.append("price", productPrice.value.trim());
+      formData.append("category", productCategory.value.trim());
+      formData.append("superCategory", superCategory.value.trim());
+      formData.append("description", productDescription.value.trim());
+      formData.append("tags", selectedTags);
+
+      // Append multi-select values as comma-separated strings
+      const colors = Array.from(
+        document.querySelectorAll("#product-colors option:checked")
+      )
+        .map((option) => option.value)
+        .join(",");
+      const sizes = Array.from(
+        document.querySelectorAll("#product-sizes option:checked")
+      )
+        .map((option) => option.value)
+        .join(",");
+      const brands = Array.from(
+        document.querySelectorAll("#product-brands option:checked")
+      )
+        .map((option) => option.value)
+        .join(",");
+      const innerCategories = Array.from(
+        document.querySelectorAll("#inner-category option:checked")
+      )
+        .map((option) => option.value)
+        .join(",");
+
+      formData.append("colors", colors);
+      formData.append("sizes", sizes);
+      formData.append("brands", brands);
+      formData.append("innerCategory", innerCategories);
+
+      // Append image files
+      if (productImage.files.length > 0) {
+        for (const file of productImage.files) {
+          formData.append("images", file);
+        }
+      }
+
+      try {
+        // Show loading state
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Adding...`;
+
+        // Send POST request
+        const response = await fetch("/api/products/new", {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to add product.");
+        }
+
+        // Success Notification
+        showToast("✅ Product added successfully!", "success");
+
+        // Reset form & button
+        productForm.reset();
+        validateForm();
+
+        // Close modal after delay
+        setTimeout(() => {
+          $("#addProductModal").modal("hide");
+          window.location.reload();
+        }, 1500);
+      } catch (err) {
+        showToast(`❌ ${err.message}`, "error");
+      } finally {
+        submitButton.innerHTML = buttonText;
+        submitButton.disabled = false;
+      }
+    });
+  });
+</script>

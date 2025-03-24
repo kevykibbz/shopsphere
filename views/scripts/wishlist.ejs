@@ -1,0 +1,45 @@
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".btn-wishlist").forEach((button) => {
+      button.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const productId = button.getAttribute("data-product-id");
+        const isInWishlist = button.classList.contains("added");
+
+        try {
+          const response = await fetch(
+            `/api/wishlist/${isInWishlist ? "remove" : "add"}`,
+            {
+              method: "POST",
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ productId }),
+            }
+          );
+
+          const result = await response.json();
+
+          if (response.ok) {
+            button.classList.toggle("added");
+            const spanElement = button.querySelector("span");
+            if (spanElement) {
+              spanElement.textContent = isInWishlist
+                ? "Add to Wishlist"
+                : "Remove from Wishlist";
+            }
+
+            showToast(result.message, "success");
+          } else {
+            showToast(result.message || "Failed to add to wishlist", "error");
+          }
+        } catch (err) {
+          console.error("Error:", err);
+          showToast("An error occurred. Please try again", "error");
+        }
+      });
+    });
+  });
+</script>

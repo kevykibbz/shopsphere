@@ -1,0 +1,516 @@
+<section>
+    <div class="page-header text-center" style="background-image: url('/assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">My Account<span>Shop</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+                    <aside class="col-md-4 col-lg-3">
+                        <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">Sign Out</a>
+                            </li>
+                        </ul>
+                    </aside><!-- End .col-lg-3 -->
+
+                    <div class="col-md-8 col-lg-9">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
+                                <p>Hello <span class="font-weight-normal text-dark"><%= user.email %></span> (not <span class="font-weight-normal text-dark"><%= user.email%></span>? <a href="/logout">Log out</a>) 
+                                <br>
+                                From your account dashboard you can view your <a href="#tab-orders" class="tab-trigger-link link-underline">recent orders</a>, manage your <a href="#tab-address" class="tab-trigger-link">shipping and billing addresses</a>, and <a href="#tab-account" class="tab-trigger-link">edit your password and account details</a>.</p>
+                            </div><!-- .End .tab-pane -->
+
+                            <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+                              <% if (orders && orders.length > 0) { %>
+                                <table class="table table-wishlist table-mobile">
+                                  <thead>
+                                    <tr>
+                                      <th>Order ID</th>
+                                      <th>Date</th>
+                                      <th>Total Amount</th>
+                                      <th>Status</th>
+                                      <th>Track Order</th>
+                                      <th>Action</th>
+                                    </tr>
+                                  </thead>
+                          
+                                  <tbody>
+                                    <% orders.forEach(order => { %>
+                                      <tr>
+                                        <td><%= order._id %></td>
+                                        <td><%= order.createdAt.toLocaleDateString() %></td>
+                                        <td>$<%= order.totalAmount.toFixed(2) %></td>
+                                        <td>
+                                          <!-- Add status-specific colors -->
+                                          <span class="badge py-3 px-3 
+                                            <% if (order.status === "Pending") { %>badge-warning<% } %>
+                                            <% if (order.status === "Processing") { %>badge-info<% } %>
+                                            <% if (order.status === "Shipped") { %>badge-primary<% } %>
+                                            <% if (order.status === "Delivered") { %>badge-success<% } %>
+                                            <% if (order.status === "Cancelled") { %>badge-danger<% } %>">
+                                            <%= order.status %>
+                                          </span>
+                                        </td>
+                                        <td>
+                                          <!-- Disable "Track Order" button for Delivered or Cancelled orders -->
+                                          <a href="#" class="btn btn-sm btn-info 
+                                            <% if (order.status === "Delivered" || order.status === "Cancelled") { %>disabled<% } %>">
+                                            Track Order
+                                          </a>
+                                        </td>
+                                        <td>
+                                          <a href="/orders/<%= order._id %>" class="btn btn-sm btn-primary">View Details</a>
+                                        </td>
+                                      </tr>
+                                    <% }) %>
+                                  </tbody>
+                                </table>
+                              <% } else { %>
+                                <p>No order has been made yet.</p>
+                                <a href="/" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
+                              <% } %>
+                            </div><!-- .End .tab-pane -->
+
+
+                            <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+                                <p>The following addresses will be used on the checkout page by default.</p>
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="card card-dashboard">
+                                            <div class="card-body">
+                                                <h3 class="card-title">Billing Address</h3><!-- End .card-title -->
+                                                <p id="billing-address-display">
+                                                    <%= user.billingAddress?.street || "No street provided" %><br>
+                                                    <%= user.billingAddress?.city || "No city provided" %><br>
+                                                    <%= user.billingAddress?.state || "No state provided" %><br>
+                                                    <%= user.billingAddress?.postalCode || "No postal code provided" %><br>
+                                                    <%= user.billingAddress?.country || "No country provided" %><br>
+                                                    <a href="#" id="edit-billing-address">Edit <i class="icon-edit"></i></a>
+                                                </p>
+                                                
+                                            </div><!-- End .card-body -->
+                                        </div><!-- End .card-dashboard -->
+                                    </div><!-- End .col-lg-6 -->
+
+                                    <div class="col-lg-6">
+                                        <div class="card card-dashboard">
+                                            <div class="card-body">
+                                                <h3 class="card-title">Shipping Address</h3><!-- End .card-title -->
+
+                                                <p>        <%= user.shippingAddress || 'You have not set up this type of address yet.' %><br>                                                    <br>
+                                                <a href="#" id="edit-shipping-address">Edit <i class="icon-edit"></i></a></p>
+                                            </div><!-- End .card-body -->
+                                        </div><!-- End .card-dashboard -->
+                                    </div><!-- End .col-lg-6 -->
+                                </div><!-- End .row -->
+                            </div><!-- .End .tab-pane -->
+
+                            <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
+                                <form id="user-profile-form">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Full Name *</label>
+                                            <input type="text" class="form-control" name="name" value="<%= user.name %>" required>
+                                        </div><!-- End .col-sm-6 -->
+                                        <div class="col-sm-6">
+                                            <label>Display Name *</label>
+                                            <input type="text" class="form-control" name="username" required value="<%= user.username %>" >
+                                    <small class="form-text">This will be how your name will be displayed in the account section and in reviews</small>
+                                        </div><!-- End .col-sm-6 -->
+                                    </div><!-- End .row -->
+
+                                    <label>Email address *</label>
+                                    <input type="email" class="form-control" name="email" required value="<%= user.email %>" readonly>
+
+                                    <label>Current password (leave blank to leave unchanged)</label>
+                                    <input type="password" class="form-control" name="current_password">
+
+                                    <label>New password (leave blank to leave unchanged)</label>
+                                    <input type="password" class="form-control" name="new_password">
+
+                                    <label>Confirm new password</label>
+                                    <input type="password" class="form-control mb-2" name="confirm_password">
+
+                                    <button type="submit" class="btn btn-outline-primary-2">
+                                        <span>SAVE CHANGES</span>
+                                        <i class="icon-long-arrow-right"></i>
+                                    </button>
+                                </form>
+                            </div><!-- .End .tab-pane -->
+                        </div>
+                    </div><!-- End .col-lg-9 -->
+                </div><!-- End .row -->
+            </div><!-- End .container -->
+        </div><!-- End .dashboard -->
+    </div><!-- End .page-content -->
+</section><!-- End .main -->
+
+
+<!-- Add Billing address Modal -->
+<div
+  class="modal fade"
+  id="editBillingAddressModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editBillingAddressModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"><i class="icon-close"></i></span>
+        </button>
+
+        <div class="form-box">
+            <form id="edit-billing-address-form">
+                <h5 class="modal-title" id="editBillingAddressModalLabel">Edit Billing Address</h5>
+                <div class="form-group">
+                    <label for="street">Street *</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="street"
+                        name="street"
+                        value="<%= user.billingAddress.street %>" 
+                        required
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="city">City *</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="city"
+                        name="city"
+                        value="<%= user.billingAddress.city %>" 
+                        required
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="state">State *</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="state"
+                        name="state"
+                        value="<%= user.billingAddress.state %>" 
+                        required
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="postalCode">Postal Code *</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="postalCode"
+                        name="postalCode"
+                        value="<%= user.billingAddress.postalCode %>" 
+                        required
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="country">Country *</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="country"
+                        name="country"
+                        value="<%= user.billingAddress.country %>" 
+                        required
+                    />
+                </div>
+            <!-- Submit Button -->
+            <div class="form-footer">
+              <button
+                type="submit"
+                form="edit-billing-address-form"
+                class="btn btn-outline-primary-2 cursor-pointer"
+              >
+                <span>SAVE CHANGES</span>
+                <i class="icon-long-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Shipping address Modal -->
+
+<div
+  class="modal fade"
+  id="editShippingAddressModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editShippingAddressModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"><i class="icon-close"></i></span>
+        </button>
+
+        <div class="form-box">
+            <form id="edit-shipping-address-form">
+                <h5 class="modal-title" id="editShippingAddressModalLabel">Edit Shipping Address</h5>
+                <div class="form-group">
+                    <label for="street">Shipping Address *</label>
+                    <textarea
+                        class="form-control"
+                        id="shipping-address-input"
+                        rows="4"
+                        placeholder="Enter your shipping address"
+                        ><%= user.shippingAddress %></textarea>
+                </div>
+              
+            <!-- Submit Button -->
+            <div class="form-footer">
+              <button
+                type="submit"
+                form="edit-shipping-address-form"
+                class="btn btn-outline-primary-2 cursor-pointer"
+              >
+                <span>SAVE CHANGES</span>
+                <i class="icon-long-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.getElementById('user-profile-form').addEventListener('submit', async (event) => {
+      event.preventDefault(); // Prevent the default form submission
+  
+      const form = event.target;
+      const submitButton = form.querySelector('button[type="submit"]');
+      const originalButtonContent = submitButton.innerHTML; // Save the original button content
+  
+      try {
+        // Show loading state
+        submitButton.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Saving...`;
+        submitButton.disabled = true;
+  
+        // Get form data
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+  
+        // Send the data to the backend
+        const response = await fetch('/api/users/update-profile', {
+          method: 'POST',
+          credentials:"include",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(data),
+        });
+  
+        const result = await response.json();
+  
+        if (response.ok) {
+          showToast('Profile updated successfully', 'success');
+        } else {
+          showToast(result.message || 'Failed to update profile', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('An error occurred while updating the profile', 'error');
+      } finally {
+        // Revert the button to its original state
+        submitButton.innerHTML = originalButtonContent;
+        submitButton.disabled = false;
+      }
+    });
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Open the modal when the "Edit" link is clicked
+      document.getElementById('edit-billing-address').addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent the default link behavior
+        const modal = new bootstrap.Modal(document.getElementById('editBillingAddressModal'));
+        modal.show();
+      });
+  
+      // Handle form submission
+      document.getElementById('edit-billing-address-form').addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent the default form submission
+  
+        const form = event.target;
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalButtonContent = submitButton.innerHTML; // Save the original button content
+  
+        try {
+          // Show loading state
+          submitButton.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Saving...`;
+          submitButton.disabled = true;
+  
+          // Get the shipping address data
+          const billingAddress = {
+            street: document.getElementById('street').value,
+            city: document.getElementById('city').value,
+            state: document.getElementById('state').value,
+            postalCode: document.getElementById('postalCode').value,
+            country: document.getElementById('country').value,
+          };
+  
+          // Send the data to the backend
+          const response = await fetch('/api/users/update-billing-address', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ billingAddress }),
+          });
+  
+          const result = await response.json();
+  
+          if (response.ok) {
+            // Update the displayed shipping address
+            const billingAddressDisplay = document.getElementById('billing-address-display');
+            if (billingAddressDisplay) {
+                billingAddressDisplay.innerHTML = `
+                ${billingAddress.street}<br>
+                ${billingAddress.city}<br>
+                ${billingAddress.state}<br>
+                ${billingAddress.postalCode}<br>
+                ${billingAddress.country}<br>
+                <a href="#" id="edit-billing-address">Edit <i class="icon-edit"></i></a>
+              `;
+            }
+            showToast('Billing address updated successfully', 'success');
+  
+            // Close the modal
+            const modalElement = document.getElementById('editBillingAddressModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.hide();
+          } else {
+            showToast(result.message || 'Failed to update billing address', 'error');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showToast('An error occurred while updating the billing address', 'error');
+        } finally {
+          // Revert the button to its original state
+          submitButton.innerHTML = originalButtonContent;
+          submitButton.disabled = false;
+        }
+      });
+    });
+  
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('edit-shipping-address').addEventListener('click', (event) => {
+        event.preventDefault();
+        const modal = new bootstrap.Modal(document.getElementById('editShippingAddressModal'));
+        modal.show();
+      });
+  
+      // Handle form submission
+      document.getElementById('edit-shipping-address-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+  
+        const form = event.target;
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalButtonContent = submitButton.innerHTML; 
+  
+        try {
+          // Show loading state
+          submitButton.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Saving...`;
+          submitButton.disabled = true;
+  
+          // Get the shipping address from the textarea
+          const shippingAddress = document.getElementById('shipping-address-input').value;
+  
+          // Send the data to the backend
+          const response = await fetch('/api/users/update-shipping-address', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ shippingAddress }),
+          });
+  
+          const result = await response.json();
+  
+          if (response.ok) {
+            // Update the displayed shipping address
+            const shippingAddressDisplay = document.getElementById('shipping-address-display');
+            if (shippingAddressDisplay) {
+              shippingAddressDisplay.innerHTML = `
+                ${shippingAddress}<br>
+                <a href="#" id="edit-shipping-address">Edit <i class="icon-edit"></i></a>
+              `;
+            }
+            showToast('Shipping address updated successfully', 'success');
+  
+            // Close the modal
+            const modalElement = document.getElementById('editShippingAddressModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.hide();
+          } else {
+            showToast(result.message || 'Failed to update shipping address', 'error');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showToast('An error occurred while updating the shipping address', 'error');
+        } finally {
+          // Revert the button to its original state
+          submitButton.innerHTML = originalButtonContent;
+          submitButton.disabled = false;
+        }
+      });
+    });
+
+  </script>
