@@ -258,7 +258,7 @@
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: "2",
+                            value: "<%= (subtotal + cartItems.shippingCost).toFixed(2) %>",
                         },
                     }],
                 });
