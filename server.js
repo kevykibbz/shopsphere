@@ -1,5 +1,6 @@
 const express = require("express");
 const connectDB = require("./db");
+const mongoose = require('mongoose'); 
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const passport = require("passport");
@@ -10,7 +11,7 @@ const expressLayouts = require("express-ejs-layouts");
 const fetchWishlist = require("./middlewares/wishlistMiddleware");
 const fetchCart = require("./middlewares/cartMiddleware");
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.APP_PORT || 3000;
 
 // Load models
 const Category = require("./models/Category");
@@ -144,6 +145,16 @@ app.use("/api/orders", orderRoutes)
 app.use("/orders", orderRoutes)
 app.use("/api/search", searchRoutes);
 
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
 
 // All other routes (404 - Not Found)
 app.use((req, res) => {
