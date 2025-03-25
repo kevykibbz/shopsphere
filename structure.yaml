@@ -1,0 +1,88 @@
+frontend:
+  components:
+    - layout.ejs
+    - 404.ejs
+    - 500.ejs
+    - about.ejs
+    - cart.ejs
+    - categories.ejs
+    - checkout.ejs
+    - contact.ejs
+    - dashboard.ejs
+    - faq.ejs
+    - index.ejs
+    - login.ejs
+    - orders.ejs
+    - product.ejs
+    - wishlist.ejs
+  scripts:
+    - add-cart.ejs
+    - remove-cart.ejs
+    - wishlist.ejs
+  partials:
+    banner:
+      - banner.ejs
+    scripts: []
+    - footer.ejs
+    - header.ejs
+    - search-form-desktop.ejs
+    - search-form-mobile.ejs
+    - search.ejs
+    - up-button.ejs
+  public:
+    assets:
+      css: []
+      fonts: []
+      js: []
+      images: []
+      vendor: []
+      - main.js
+    lib: []
+    popup: []
+
+backend:
+  components:
+    - server.js
+    - user.http
+    - healthcheck.js
+    - db.js
+  firebase:
+    - firebase.js
+  logs: []
+  middlewares:
+    - auth.js
+    - cartMiddleware.js
+    - isAdmin.js
+    - wishlistMiddleware.js
+  models:
+    - Cart.js
+    - Category.js
+    - Order.js
+    - Product.js
+    - User.js
+    - Wishlist.js
+  routes:
+    - cart.js
+    - category.js
+    - checkout.js
+    - dashboard.js
+    - index.js
+    - orders.js
+    - product.js
+    - search.js
+    - user.js
+    - wishlist.js
+  utils:
+    - ensureArray.js
+    - multer.js
+
+config:
+  - docker-compose.yml
+  - Dockerfile
+  - .env
+  - .gitignore
+  - .dockerignore
+  - fly.toml
+
+dependencies:
+  - node_modules/
